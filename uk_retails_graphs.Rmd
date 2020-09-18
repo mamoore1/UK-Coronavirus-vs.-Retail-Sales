@@ -51,6 +51,27 @@ household_goods_retail_plot <- ggplot(data=retail_sales, aes(x=month, y=Househol
   labs(title="Indexed Weekly Sales by Month", subtitle="Household goods stores", x="Month", y="Indexed Weekly Sales") 
 household_goods_retail_plot 
 
+
+```
+
+``` {r}
+combined_retail_plot <- ggplot(data=retail_sales, aes(x=month)) +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8), labels=c("Jan", "Feb", "March", "April", "May", "June", "July", "August")) +
+  labs(title="Indexed Weekly Sales by Month", x="Month", y="Indexed Weekly Sales") +
+  # Non-food
+  geom_point(aes(y=Total.predominantly.non.food.stores), color="red") +
+  geom_line(aes(y=Total.predominantly.non.food.stores), color="red") +
+  # Textiles
+  geom_point(aes(y=Textile..clothing.and.footwear.stores), color="blue") +
+  geom_line(aes(y=Textile..clothing.and.footwear.stores), color="blue") +
+  # Household goods
+  geom_point(aes(y=Household.goods.stores), color="green") +
+  geom_line(aes(y=Household.goods.stores), color="green") +
+  # Non-specialised
+  geom_point(aes(y=Non.specialised.stores), color="orange") +
+  geom_line(aes(y=Non.specialised.stores), color="orange")
+combined_retail_plot
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
