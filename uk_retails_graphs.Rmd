@@ -119,7 +119,7 @@ combined_retail_plot <- ggplot(data=combined_retail_table, aes(x=month, y=value,
                           ) +
   scale_y_continuous(
     name = "Indexed Weekly Sales\n(100 = 2016 sales)",
-    sec.axis = sec_axis(trans=~.*3000, name="Uh oh")
+    sec.axis = sec_axis(trans=~.*3000, name="Total Coronavirus Cases")
   ) +
   geom_line(data=total_cases, aes(x=month, y=cumCasesBySpecimenDate/3000, color=F))
 combined_retail_plot
