@@ -56,29 +56,77 @@ household_goods_retail_plot
 library(dplyr)
 library(reshape2)
 combined_retail_table <- melt(data=retail_sales, id.vars=c("month"), measure.vars=c("Total.predominantly.non.food.stores", "Textile..clothing.and.footwear.stores", "Household.goods.stores", "Non.specialised.stores"))
+  
 combined_retail_table
 
 ```
 
 ``` {r}
-combined_retail_plot <- ggplot(data=retail_sales, aes(x=month)) +
+
+combined_retail_plot <- ggplot(data=combined_retail_table, aes(x=month, y=value, color=variable)) +
+  geom_line() +
   scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8), labels=c("Jan", "Feb", "March", "April", "May", "June", "July", "August")) +
-  labs(title="Indexed Weekly Sales by Month", x="Month", y="Indexed Weekly Sales") +
-  # Non-food
-  geom_point(aes(y=Total.predominantly.non.food.stores), color="red") +
-  geom_line(aes(y=Total.predominantly.non.food.stores), color="red") +
-  # Textiles
-  geom_point(aes(y=Textile..clothing.and.footwear.stores), color="blue") +
-  geom_line(aes(y=Textile..clothing.and.footwear.stores), color="blue") +
-  # Household goods
-  geom_point(aes(y=Household.goods.stores), color="green") +
-  geom_line(aes(y=Household.goods.stores), color="green") +
-  # Non-specialised
-  geom_point(aes(y=Non.specialised.stores), color="orange") +
-  geom_line(aes(y=Non.specialised.stores), color="orange")
+  labs(title="Indexed Weekly Sales by Month", x="Month", y="Indexed Weekly Sales\n(100 = 2016 sales)") +
+  scale_color_discrete(name  ="Type of Store",
+                       breaks = c("Total.predominantly.non.food.stores", "Textile..clothing.and.footwear.stores",
+                                  "Household.goods.stores", "Non.specialised.stores"),
+                       labels = c("Total predominantly non-food stores",
+                                  "Textile, clothing and footwear stores",
+                                  "Household goods stores",
+                                  "Non-specialised stores (e.g., department stores)")
+                          )
 combined_retail_plot
 
+ggsave("combined_retail_plot.png")
+ 
+
 ```
+
+```{r}
+library(tidyverse)
+
+uk_cases <- read_csv("data_2020-Sep-16.csv")
+#head(uk_cases)
+total_cases <- uk_cases %>%
+  filter(areaName == "England") %>%
+  group_by(date) %>%
+  map_df(rev)
+
+total_cases <- total_cases %>%
+  mutate(day=c(1:nrow(total_cases)))
+
+
+
+total_cases <- total_cases %>%
+  as.data.frame()
+
+head(total_cases)
+
+```
+```{r}
+
+combined_retail_plot <- ggplot(data=combined_retail_table, aes(x=month, y=value, color=variable)) +
+  geom_line() +
+  scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), labels=c("Jan", "Feb", "March", "April", "May", "June", "July", "August", "September", "October")) +
+  labs(title="Indexed Weekly Sales by Month", x="Month", y="Indexed Weekly Sales\n(100 = 2016 sales)") +
+  scale_color_discrete(name  ="Type of Store",
+                       breaks = c("Total.predominantly.non.food.stores", "Textile..clothing.and.footwear.stores",
+                                  "Household.goods.stores", "Non.specialised.stores"),
+                       labels = c("Total predominantly non-food stores",
+                                  "Textile, clothing and footwear stores",
+                                  "Household goods stores",
+                                  "Non-specialised stores (e.g., department stores)")
+                          ) +
+  scale_y_continuous(
+    name = "Indexed Weekly Sales\n(100 = 2016 sales)",
+    sec.axis = sec_axis(trans=~.*3000, name="Uh oh")
+  ) +
+  geom_line(data=total_cases, aes(x=month, y=cumCasesBySpecimenDate/3000, color=F))
+combined_retail_plot
+
+ggsave("retail_and_coronavirus_combined.png")
+```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
